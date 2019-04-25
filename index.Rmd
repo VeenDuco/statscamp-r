@@ -1,0 +1,22 @@
+---
+title: "Statscamp Safira - CFA in R"
+author: "Duco Veen"
+date: "25 april 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Recap of morning
+
+   - Load data
+   - Rename data
+   - Define model 
+   - fit model
+   - investigate the fit object
+   
+
+## From regression to CFA
+
