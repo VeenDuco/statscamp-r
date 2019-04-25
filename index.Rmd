@@ -84,6 +84,13 @@ parameterEstimates(fit)
 fitMeasures(fit)
 ```
 
+```{r, eval = TRUE, message = FALSE, echo=FALSE}
+library(semPlot)
+fit_hidden <- lavaan(model, data = data)
+semPaths(fit_hidden, whatLabels = "est")
+``` 
+
+
 
 ## Extending this model
 
