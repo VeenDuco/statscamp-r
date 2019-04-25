@@ -145,6 +145,11 @@ parameterEstimates(fit2)
 fitMeasures(fit2)
 ```
 
+```{r, eval = TRUE, message = FALSE, echo=FALSE}
+fit_hidden2 <- lavaan(model2, data = data)
+semPaths(fit_hidden2, whatLabels = "est")
+``` 
+
 
 ## Or add another factor
 
@@ -207,4 +212,8 @@ parameterEstimates(fit3)
 fitMeasures(fit3)
 ```
 
+```{r, eval = TRUE, message = FALSE, echo=FALSE}
+fit_hidden3 <- lavaan(model3, data = data)
+semPaths(fit_hidden3, whatLabels = "est")
+``` 
 
