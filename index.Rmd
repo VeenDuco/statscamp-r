@@ -85,3 +85,119 @@ fitMeasures(fit)
 ```
 
 
+## Extending this model
+
+### Specify your model
+```{r, message=TRUE, echo = TRUE}
+model2 <- '
+visual =~ 1 * x1 + x2 + x3 + x4
+visual ~~ visual
+x1 ~ 1
+x2 ~ 1
+x3 ~ 1
+x4 ~ 1
+x1 ~~ x1
+x2 ~~ x2
+x3 ~~ x3
+x4 ~~ x4
+visual ~ 0 
+'
+```
+
+*note*: We have defined the scale by setting the first factor loading to 1 and the mean of the latent variable to 0.
+
+```{r, eval = TRUE, message = FALSE, echo=FALSE}
+library(semPlot)
+fit_hidden2 <- lavaan(model2, data = data)
+semPaths(fit_hidden2)
+``` 
+
+### Fit your model
+
+```{r, message=TRUE, echo = TRUE}
+fit2 <- lavaan(model2, data = data)
+```
+
+### Check your fit object
+
+   - Use summary as before
+
+```{r}
+summary(fit2)
+```
+
+   - Alternatively use lavaan function `parameterEstimates`.
+
+```{r}
+parameterEstimates(fit2)
+```
+
+### Check your model fit
+
+```{r}
+fitMeasures(fit2)
+```
+
+
+## Or add another factor
+
+### Specify your model
+```{r, message=TRUE, echo = TRUE}
+model3 <- '
+visual =~ 1 * x1 + x2 + x3
+textual =~ 1 * x4 + x5 + x6
+visual ~~ visual
+textual ~~ textual
+visual ~~ textual
+x1 ~ 1
+x2 ~ 1
+x3 ~ 1
+x4 ~ 1
+x5 ~ 1
+x6 ~ 1
+x1 ~~ x1
+x2 ~~ x2
+x3 ~~ x3
+x4 ~~ x4
+x5 ~~ x5
+x6 ~~ x6
+visual ~ 0
+textual ~ 0
+'
+```
+
+*note*: We have defined the scale by setting the first factor loading to 1 and the mean of the latent variable to 0.
+
+```{r, eval = TRUE, message = FALSE, echo=FALSE}
+library(semPlot)
+fit_hidden3 <- lavaan(model3, data = data)
+semPaths(fit_hidden3)
+``` 
+
+### Fit your model
+
+```{r, message=TRUE, echo = TRUE}
+fit3 <- lavaan(model3, data = data)
+```
+
+### Check your fit object
+
+   - Use summary as before
+
+```{r}
+summary(fit3)
+```
+
+   - Alternatively use lavaan function `parameterEstimates`.
+
+```{r}
+parameterEstimates(fit3)
+```
+
+### Check your model fit
+
+```{r}
+fitMeasures(fit3)
+```
+
+
