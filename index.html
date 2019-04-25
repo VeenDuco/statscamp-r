@@ -141,6 +141,165 @@ $(document).ready(function () {
 </div>
 <div id="from-regression-to-cfa" class="section level2">
 <h2>From regression to CFA</h2>
+<div id="prepare-and-load-package-to-do-cfa" class="section level3">
+<h3>prepare and load package to do CFA</h3>
+<pre class="r"><code>library(lavaan)</code></pre>
+<pre><code>## This is lavaan 0.6-3</code></pre>
+<pre><code>## lavaan is BETA software! Please report any bugs.</code></pre>
+</div>
+<div id="get-data" class="section level3">
+<h3>Get data</h3>
+<ul>
+<li>Replace this step with your own data as before</li>
+</ul>
+<pre class="r"><code>data &lt;- HolzingerSwineford1939
+summary(data)</code></pre>
+<pre><code>##        id             sex            ageyr        agemo       
+##  Min.   :  1.0   Min.   :1.000   Min.   :11   Min.   : 0.000  
+##  1st Qu.: 82.0   1st Qu.:1.000   1st Qu.:12   1st Qu.: 2.000  
+##  Median :163.0   Median :2.000   Median :13   Median : 5.000  
+##  Mean   :176.6   Mean   :1.515   Mean   :13   Mean   : 5.375  
+##  3rd Qu.:272.0   3rd Qu.:2.000   3rd Qu.:14   3rd Qu.: 8.000  
+##  Max.   :351.0   Max.   :2.000   Max.   :16   Max.   :11.000  
+##                                                               
+##          school        grade             x1               x2       
+##  Grant-White:145   Min.   :7.000   Min.   :0.6667   Min.   :2.250  
+##  Pasteur    :156   1st Qu.:7.000   1st Qu.:4.1667   1st Qu.:5.250  
+##                    Median :7.000   Median :5.0000   Median :6.000  
+##                    Mean   :7.477   Mean   :4.9358   Mean   :6.088  
+##                    3rd Qu.:8.000   3rd Qu.:5.6667   3rd Qu.:6.750  
+##                    Max.   :8.000   Max.   :8.5000   Max.   :9.250  
+##                    NA's   :1                                       
+##        x3              x4              x5              x6        
+##  Min.   :0.250   Min.   :0.000   Min.   :1.000   Min.   :0.1429  
+##  1st Qu.:1.375   1st Qu.:2.333   1st Qu.:3.500   1st Qu.:1.4286  
+##  Median :2.125   Median :3.000   Median :4.500   Median :2.0000  
+##  Mean   :2.250   Mean   :3.061   Mean   :4.341   Mean   :2.1856  
+##  3rd Qu.:3.125   3rd Qu.:3.667   3rd Qu.:5.250   3rd Qu.:2.7143  
+##  Max.   :4.500   Max.   :6.333   Max.   :7.000   Max.   :6.1429  
+##                                                                  
+##        x7              x8               x9       
+##  Min.   :1.304   Min.   : 3.050   Min.   :2.778  
+##  1st Qu.:3.478   1st Qu.: 4.850   1st Qu.:4.750  
+##  Median :4.087   Median : 5.500   Median :5.417  
+##  Mean   :4.186   Mean   : 5.527   Mean   :5.374  
+##  3rd Qu.:4.913   3rd Qu.: 6.100   3rd Qu.:6.083  
+##  Max.   :7.435   Max.   :10.000   Max.   :9.250  
+## </code></pre>
+</div>
+<div id="specify-your-model" class="section level3">
+<h3>Specify your model</h3>
+<pre class="r"><code>model &lt;- '
+visual =~ 1 * x1 + x2 + x3
+visual ~~ visual
+x1 ~ 1
+x2 ~ 1
+x3 ~ 1
+x1 ~~ x1
+x2 ~~ x2
+x3 ~~ x3
+visual ~ 0 
+'</code></pre>
+<p><em>note</em>: We have defined the scale by setting the first factor loading to 1 and the mean of the latent variable to 0.</p>
+<p><img src="data:image/png;base64,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2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZOPvdP8AAAQwSURBVGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra7yegZGa/2trvJ6BkZr/a2u8noGRmv9ra79c9oN3P1539amu/X/MD7rofsDn71dZ/v+bn6z9gb/arrf9+vc+3u+5+wt7sV9sA+/U+3gADtma/2gbYr/Xxdi/+l3rsV9sI+7U+3e7V/1GN/WobYb/Oh9u9+X9qsV9tQ+zX+XC7d39AJfarbYj9Gp9tt+ePqMN+tY2xX9+z7Q78MTXYr7ZB9ut7tEEGbMt+tQ2yX9uj7Y78GfnZr7ZR9mt7st3RPyU7+9U2yn5dD/b2XF3P2ZX9ahtmv64He3eurgdtyn61DbNf03O9P1bTgzZlv9rG2a/pufYcq+lJe7JfbePs1/NYz6f643d7vpDk7FfbQPv1PtXnb3/dfcCW7FfbQPu1PNXToT7/8Ifv9nwxudmvtpH263iol2dqP2BD9qttqP06HurQgC0P25D9ahtqv4ZnenWk9gP2Y7/axtqv4ZmOHKnhafuxX21j7dfvSEdP1O+47divtsH2G+xE/Y7bjv1qG2y/dic6caB25+3GfrWNtt9oB2p33m7sV9to+3U70O6krV8hx9ivtuH263YegNUIKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQJCAAgQJKECQgAIECShAkIACBAkoQND/A7ThxZVo8Rw3AAAAAElFTkSuQmCC" width="672" /></p>
+</div>
+<div id="fit-your-model" class="section level3">
+<h3>Fit your model</h3>
+<pre class="r"><code>fit &lt;- lavaan(model, data = data)</code></pre>
+</div>
+<div id="check-your-fit-object" class="section level3">
+<h3>Check your fit object</h3>
+<ul>
+<li>Use summary as before</li>
+</ul>
+<pre class="r"><code>summary(fit)</code></pre>
+<pre><code>## lavaan 0.6-3 ended normally after 23 iterations
+## 
+##   Optimization method                           NLMINB
+##   Number of free parameters                          9
+## 
+##   Number of observations                           301
+## 
+##   Estimator                                         ML
+##   Model Fit Test Statistic                       0.000
+##   Degrees of freedom                                 0
+##   Minimum Function Value               0.0000000000000
+## 
+## Parameter Estimates:
+## 
+##   Information                                 Expected
+##   Information saturated (h1) model          Structured
+##   Standard Errors                             Standard
+## 
+## Latent Variables:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##   visual =~                                           
+##     x1                1.000                           
+##     x2                0.778    0.141    5.532    0.000
+##     x3                1.107    0.214    5.173    0.000
+## 
+## Intercepts:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##    .x1                4.936    0.067   73.473    0.000
+##    .x2                6.088    0.068   89.855    0.000
+##    .x3                2.250    0.065   34.579    0.000
+##     visual            0.000                           
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##     visual            0.524    0.130    4.021    0.000
+##    .x1                0.835    0.118    7.064    0.000
+##    .x2                1.065    0.105   10.177    0.000
+##    .x3                0.633    0.129    4.899    0.000</code></pre>
+<ul>
+<li>Alternatively use lavaan function <code>parameterEstimates</code>.</li>
+</ul>
+<pre class="r"><code>parameterEstimates(fit)</code></pre>
+<pre><code>##       lhs op    rhs   est    se      z pvalue ci.lower ci.upper
+## 1  visual =~     x1 1.000 0.000     NA     NA    1.000    1.000
+## 2  visual =~     x2 0.778 0.141  5.532      0    0.502    1.053
+## 3  visual =~     x3 1.107 0.214  5.173      0    0.688    1.527
+## 4  visual ~~ visual 0.524 0.130  4.021      0    0.268    0.779
+## 5      x1 ~1        4.936 0.067 73.473      0    4.804    5.067
+## 6      x2 ~1        6.088 0.068 89.855      0    5.955    6.221
+## 7      x3 ~1        2.250 0.065 34.579      0    2.123    2.378
+## 8      x1 ~~     x1 0.835 0.118  7.064      0    0.603    1.066
+## 9      x2 ~~     x2 1.065 0.105 10.177      0    0.860    1.270
+## 10     x3 ~~     x3 0.633 0.129  4.899      0    0.380    0.886
+## 11 visual ~1        0.000 0.000     NA     NA    0.000    0.000</code></pre>
+</div>
+<div id="check-your-model-fit" class="section level3">
+<h3>Check your model fit</h3>
+<pre class="r"><code>fitMeasures(fit)</code></pre>
+<pre><code>##                npar                fmin               chisq 
+##               9.000               0.000               0.000 
+##                  df              pvalue      baseline.chisq 
+##               0.000                  NA             111.271 
+##         baseline.df     baseline.pvalue                 cfi 
+##               3.000               0.000               1.000 
+##                 tli                nnfi                 rfi 
+##               1.000               1.000               1.000 
+##                 nfi                pnfi                 ifi 
+##               1.000               0.000               1.000 
+##                 rni                logl   unrestricted.logl 
+##               1.000           -1356.977           -1356.977 
+##                 aic                 bic              ntotal 
+##            2731.955            2765.319             301.000 
+##                bic2               rmsea      rmsea.ci.lower 
+##            2736.776               0.000               0.000 
+##      rmsea.ci.upper        rmsea.pvalue                 rmr 
+##               0.000                  NA               0.000 
+##          rmr_nomean                srmr        srmr_bentler 
+##               0.000               0.000               0.000 
+## srmr_bentler_nomean                crmr         crmr_nomean 
+##               0.000               0.000               0.000 
+##          srmr_mplus   srmr_mplus_nomean               cn_05 
+##               0.000               0.000               1.000 
+##               cn_01                 gfi                agfi 
+##               1.000               1.000               1.000 
+##                pgfi                 mfi                ecvi 
+##               0.000               1.000               0.060</code></pre>
+</div>
 </div>
 
 

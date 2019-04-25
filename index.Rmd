@@ -20,3 +20,68 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## From regression to CFA
 
+### prepare and load package to do CFA
+
+```{r, message=TRUE, echo = TRUE}
+library(lavaan)
+```
+
+### Get data
+
+   - Replace this step with your own data as before 
+
+```{r, message=TRUE, echo = TRUE}
+data <- HolzingerSwineford1939
+summary(data)
+```
+
+### Specify your model
+```{r, message=TRUE, echo = TRUE}
+model <- '
+visual =~ 1 * x1 + x2 + x3
+visual ~~ visual
+x1 ~ 1
+x2 ~ 1
+x3 ~ 1
+x1 ~~ x1
+x2 ~~ x2
+x3 ~~ x3
+visual ~ 0 
+'
+```
+
+*note*: We have defined the scale by setting the first factor loading to 1 and the mean of the latent variable to 0.
+
+```{r, eval = TRUE, message = FALSE, echo=FALSE}
+library(semPlot)
+fit_hidden <- lavaan(model, data = data)
+semPaths(fit_hidden)
+``` 
+
+### Fit your model
+
+```{r, message=TRUE, echo = TRUE}
+fit <- lavaan(model, data = data)
+```
+
+### Check your fit object
+
+   - Use summary as before
+
+```{r}
+summary(fit)
+```
+
+   - Alternatively use lavaan function `parameterEstimates`.
+
+```{r}
+parameterEstimates(fit)
+```
+
+### Check your model fit
+
+```{r}
+fitMeasures(fit)
+```
+
+
